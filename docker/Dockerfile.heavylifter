@@ -1,0 +1,7 @@
+FROM clojure:temurin-20-tools-deps
+
+WORKDIR /usr/src/app
+
+COPY ./target/aleph-stress-0.1.0-standalone.jar /usr/src/app/aleph-stress.jar
+
+CMD ["java", "-jar", "/usr/src/app/aleph-stress.jar", "heavylifter"]

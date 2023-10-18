@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebSocket Test</title>
+  </head>
+  <body>
+    <h1>Aleph Stress</h1>
+    <script>
+      let socket = new WebSocket("ws://localhost:9000/websocket/50");
+
+      socket.addEventListener("open", (event) => {
+        console.log("Connection opened");
+      });
+
+      socket.addEventListener("message", function (event) {
+        console.log("Received Message: ", event.data);
+      });
+
+      socket.addEventListener("close", function (event) {
+        console.log("Disconnected from WebSocket server");
+      });
+
+      socket.addEventListener("error", function (error) {
+        console.log("Error Occurred: ", error);
+      });
+    </script>
+  </body>
+</html>
