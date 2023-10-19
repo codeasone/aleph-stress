@@ -6,7 +6,7 @@ First experiment with `aleph` in the context of a toy architecture for:
 - monitoring asynchronous completions of that work notified via `webhooks`; and
 - notification of interested clients via their `websocket` connections (intermediated by a `postgres` table mapping `id`s to `completion` timestamps)
 
-<img src="./images/logical-architecture.png" alt="Logical Architecture" width="800"/>
+<img src="./images/aleph-stress.png" alt="Logical Architecture" width="750"/>
 
 More details and results of stress testing with an async `driver` process coming soon...
 
