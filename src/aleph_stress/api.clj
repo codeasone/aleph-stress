@@ -6,7 +6,7 @@
             [manifold.stream :as s]
             [next.jdbc :as jdbc]))
 
-(hugsql/def-sqlvec-fns "sql/router.sql")
+(hugsql/def-sqlvec-fns "sql/api.sql")
 
 (defn post-to-heavylifter! [id]
   (prn "Posting to heavylifter")
