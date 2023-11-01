@@ -1,8 +1,10 @@
 (ns aleph-stress.system
-  (:require [aleph-stress.router :as router]
+  (:require [aleph-stress.metrics :as metrics]
+            [aleph-stress.router :as router]
             [aleph.http :as http]
             [clojure.java.io :as io]
             [hikari-cp.core :as cp]
+            [iapetos.collector.ring :as iapetos-ring]
             [integrant.core :as ig]
             [reitit.ring :as ring]))
 
@@ -22,7 +24,8 @@
                            (router/router ctx)
                            (constantly {:status 404, :body "Not found"})))]
 
-    (ring/reloading-ring-handler handler-fn)))
+    (-> (ring/reloading-ring-handler handler-fn)
+        (iapetos-ring/wrap-metrics metrics/registry {:path "/metrics"}))))
 
 (defmethod ig/init-key :aleph-stress/server
   [_ {port :port app :app}]

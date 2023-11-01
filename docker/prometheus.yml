@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'api-servers'
+    static_configs:
+    - targets:
+      - 'api-a:9000'
+      - 'api-b:9000'

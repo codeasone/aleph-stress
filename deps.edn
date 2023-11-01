@@ -21,6 +21,9 @@
                                   org.postgresql/postgresql {:mvn/version "42.6.0"}}
                      :main-opts ["-m" "clj-migratus"]}
 
+           :metrics {:extra-deps {io.prometheus/simpleclient_hotspot {:mvn/version "0.6.0"}
+                                  clj-commons/iapetos {:mvn/version "0.1.9"}}}
+
            :backend
            {:extra-deps {integrant/integrant {:mvn/version "0.8.0"}
 

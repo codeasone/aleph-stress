@@ -1,4 +1,4 @@
 ;; https://clojure-lsp.io/settings/
 {:source-paths #{"dev" "src"}
  :project-specs [{:project-path "deps.edn"
-                  :classpath-cmd ["clojure" "-A:dev:build:test:migrate:backend" "-Spath"]}]}
+                  :classpath-cmd ["clojure" "-A:dev:build:test:migrate:backend:metrics" "-Spath"]}]}
