@@ -29,6 +29,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.api
+    container_name: api-a
     ports:
       - 9001:9000
     depends_on:
@@ -38,6 +39,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.api
+    container_name: api-b
     ports:
       - 9002:9000
     depends_on:
