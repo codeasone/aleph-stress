@@ -15,7 +15,8 @@
                            :port-number        5432
                            :register-mbeans    false}
 
- :aleph-stress/app {:database #ig/ref :aleph-stress/datasource}
+ :aleph-stress/app {:database #ig/ref :aleph-stress/datasource
+                    :mode "monolith"}
 
  :aleph-stress/server {:port 9000
                        :app #ig/ref :aleph-stress/app}}
