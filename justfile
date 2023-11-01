@@ -28,5 +28,8 @@ db-connect:
 db-drop:
   PGPASSWORD=insecure psql -U postgres -h localhost -p 5432 -c "DROP DATABASE IF EXISTS aleph_stress;"
 
+db-reset:
+  PGPASSWORD=insecure psql -U postgres -h localhost -p 5432 -d aleph_stress -c "DELETE FROM submission;"
+
 format:
   cljfmt fix

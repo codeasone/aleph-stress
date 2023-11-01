@@ -1,0 +1,83 @@
+* aleph-stress
+First experiment with =aleph= in the context of a toy architecture for:
+
+- the offloading of work =submissions= from a load-balanced array of =api= servers to a =heavylifter= server (it just "sleeps" and doesn't actually do any heavy lifting);
+- monitoring asynchronous completions of that work notified via =webhooks=; and
+- notification of interested clients via their =websocket= connections (intermediated by a =postgres= table mapping =id=s to =completion= timestamps)
+
+[[file:images/aleph-stress.png]]
+
+*Disclaimer:* this architecture is not intended to be optimal or even good, just simple. I'm interested to see where it hits the wall in terms of resource utilisation given the asynchronous architecture of =aleph=
+
+** Development
+In a local development environment =heavylifter= and =api-lb= must resolve to localhost to add the following to =etc/hosts=
+
+#+begin_example
+127.0.0.1 heavylifter
+127.0.0.1 api-lb
+#+end_example
+
+If you're running Emacs, =.dir-locals.el= settings mean you should be able to jack-in to =cider= and =(go)=
+
+If establishing and connecting to the REPL through other means, you'll want the =:dev:test:backend= aliases tin order to obtain the correct classpath.
+
+When the system is =:initiated= in the REPL, proceed to run the sanity check steps documented below.
+
+** Quick sanity check
+Reset the DB with =just db-reset=
+
+Visit =ws.html= in your browser and open the DevTools console.
+
+If the backend is up-and-running you should see:
+
+#+begin_example
+Connection opened
+#+end_example
+
+One of the =api= servers in the composition will be =Polling submission status for [#]...= in the REPL.
+
+Submit some work:
+
+#+begin_src restclient
+POST http://localhost:9000/submission/50
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+// POST http://localhost:9000/submission/50
+// HTTP/1.1 200 OK
+// Content-Type: application/octet-stream
+// Server: Aleph/0.5.0
+// Date: Wed, 01 Nov 2023 10:49:45 GMT
+// Connection: Keep-Alive
+// content-length: 0
+// Request duration: 0.078365s
+#+END_SRC
+
+** Driving
+*** Build
+#+begin_src sh
+just build
+#+end_src
+
+*** Prepare DB
+#+begin_src sh
+docker-compose up postgres
+#+end_src
+
+and
+
+#+begin_src sh
+just db-create db-migrate
+#+end_src
+
+*** Bring up rig
+#+begin_src sh
+docker-compose up
+#+end_src
+
+*** Drive
+More details and results of stress testing with an async =driver= process coming soon...
+
+*** Report
+TBD
