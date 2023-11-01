@@ -56,5 +56,30 @@ services:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=insecure
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    depends_on:
+      - api-a
+      - api-b
+
+  # Use admin:admin to log in, then add http://prometheus:9090 as a data source
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+
 volumes:
   pgdata:
+  grafana-storage:
