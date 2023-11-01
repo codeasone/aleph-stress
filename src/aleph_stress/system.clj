@@ -37,7 +37,7 @@
   ([mode]
    (ig/init (cond-> config
               mode
-              (assoc-in  [:aleph-stress/app :mode] mode)))))
+              (assoc-in [:aleph-stress/app :mode] mode)))))
 
 (defn stop! [sys]
   (ig/halt! sys))

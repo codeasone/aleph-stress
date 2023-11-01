@@ -23,7 +23,7 @@
   (let [{:keys [id]} path-params]
     (prn "Received submission: " id)
     (jdbc/execute-one! database (insert-submission-sqlvec
-                                 {:id (read-string id)}) {:return-keys true})
+                                 {:id (read-string id)}))
     (post-to-heavylifter! id)
     {:status 200}))
 
@@ -35,28 +35,34 @@
     (prn "Completed submission!")
     {:status 200}))
 
-(defn websocket-handler
-  [{:keys [database path-params] :as request}]
-  (d/chain
-   (http/websocket-connection request)
-   (fn [socket]
-     (let [{:keys [id]} path-params]
-       #_(s/consume identity socket)
-       (async/go-loop []
-         (if (s/closed? socket)
-           (prn (format "Client [%d] disconnected" id))
-           (let [_ (async/<! (async/timeout 1000))
-                 {:keys [:submission/completed]}
-                 (try
-                   (jdbc/execute-one! database (submission-complete?-sqlvec
-                                                {:id (read-string id)}))
-                   (catch Exception _
-                     (prn "Error polling database")))]
-             (if completed
-               (s/put! socket (str {:completed id}))
-               (do
-                 (prn "Waiting...")
-                 (recur))))))))))
+(def clients (atom {}))
+
+(defn websocket-handler [{:keys [database path-params] :as request}]
+  (let [ws @(http/websocket-connection request)
+        {:keys [id]} path-params]
+    (prn (format "Client [%s] connected" id))
+    (s/on-closed ws (fn []
+                      (swap! clients dissoc ws)
+                      (prn (format "Client [%s] disconnected" id))))
+    (async/go-loop []
+      (if (s/closed? ws)
+        (prn (format "Client [%s] disconnected" id))
+        (let [_ (async/<! (async/timeout 1000))
+              {:keys [:submission/completed]}
+              (try
+                (jdbc/execute-one! database
+                                   (submission-complete?-sqlvec {:id (read-string id)}))
+                (catch Exception e
+                  (prn (format "Error polling submission status for client [%s]: %s"
+                               id (.getMessage e)))))]
+          (if completed
+            (do
+              (s/put! ws (str {:completed id}))
+              (prn (format "Submission completed for client [%s]" id)))
+            (do
+              (prn (format "Polling submission status for client [%s]..." id))
+              (recur))))))
+    (swap! clients assoc ws id)))
 
 (defn routes
   []
