@@ -1,3 +1,8 @@
+:PROPERTIES:
+:GPTEL_MODEL: gpt-4
+:GPTEL_BOUNDS: nil
+:END:
+
 * aleph-stress
 First experiment with =aleph= in the context of a toy architecture for:
 
@@ -46,12 +51,11 @@ POST http://localhost:9000/submission/50
 #+BEGIN_SRC js
 // POST http://localhost:9000/submission/50
 // HTTP/1.1 200 OK
-// Content-Type: application/octet-stream
-// Server: Aleph/0.5.0
-// Date: Wed, 01 Nov 2023 10:49:45 GMT
-// Connection: Keep-Alive
+// content-type: application/octet-stream
+// server: Aleph/0.5.0
+// date: Wed, 01 Nov 2023 13:27:34 GMT
 // content-length: 0
-// Request duration: 0.078365s
+// Request duration: 0.051633s
 #+END_SRC
 
 ** Driving
@@ -81,9 +85,9 @@ More details and results of stress testing with an async =driver= process coming
 
 *** Metrics
 
-Various JVM and =ring= metrics for the =api= servers are scrapped by =prometheus= via a middleware-provided =/metrics= route
+Various JVM and =ring= metrics for the =api= servers are scrapped by =prometheus=
 
-The data captures can be visualised as required using =graphana= at the http://localhost:3000
+The metric data can be visualised as required using =grafana= at the http://localhost:3000
 
 *NB:* The specific steps for connecting the two and building an appropriate dashboard are out of the scope of this document 🙌🏻 look at the =docker-compose.yml= for some hints
 
