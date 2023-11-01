@@ -7,24 +7,24 @@
 First experiment with =aleph= in the context of a toy architecture for:
 
 - the offloading of work =submissions= from a load-balanced array of =api= servers to a =heavylifter= server (it just "sleeps" and doesn't actually do any heavy lifting);
-- monitoring asynchronous completions of that work notified via =webhooks=; and
-- notification of interested clients via their =websocket= connections (intermediated by a =postgres= table mapping =id=s to =completion= timestamps)
+- monitoring completion of that work notified via =webhooks=; and
+- notification of interested clients via their respective =websocket= connections (intermediated by a =postgres= table mapping submission =id= to =completion= timestamps)
 
 [[file:images/aleph-stress.png]]
 
 *Disclaimer:* this architecture is not intended to be optimal or even good, just simple. I'm interested to see where it hits the wall in terms of resource utilisation given the asynchronous architecture of =aleph=
 
 ** Development
-In a local development environment =heavylifter= and =api-lb= must resolve to localhost to add the following to =etc/hosts=
+In a local development environment =heavylifter= and =api-lb= must resolve to localhost, so add the following to your =/etc/hosts=
 
-#+begin_example
+a#+begin_example
 127.0.0.1 heavylifter
 127.0.0.1 api-lb
 #+end_example
 
-If you're running Emacs, =.dir-locals.el= settings mean you should be able to jack-in to =cider= and =(go)=
+If you're running Emacs, the provided =.dir-locals.el= means you should be able to jack-in to =cider= and =(go)=
 
-If establishing and connecting to the REPL through other means, you'll want the =:dev:test:backend= aliases tin order to obtain the correct classpath.
+If establishing a REPL through other means, you'll want the =:dev:test:backend:metrics= aliases to apply in order to obtain the correct classpath.
 
 When the system is =:initiated= in the REPL, proceed to run the sanity check steps documented below.
 
@@ -75,7 +75,7 @@ and
 just db-create db-migrate
 #+end_src
 
-*** Bring up rig
+*** Bring up entire rig
 #+begin_src sh
 docker-compose up
 #+end_src
@@ -85,13 +85,13 @@ More details and results of stress testing with an async =driver= process coming
 
 *** Metrics
 
-Various JVM and =ring= metrics for the =api= servers are scrapped by =prometheus=
+Various JVM and =ring= metrics for the =api= servers are scraped by =prometheus=
 
-The metric data can be visualised as required using =grafana= at the http://localhost:3000
+The metric data can be visualised with =grafana= at http://localhost:3000
 
-*NB:* The specific steps for connecting the two and building an appropriate dashboard are out of the scope of this document 🙌🏻 look at the =docker-compose.yml= for some hints
+The specific steps for connecting the two and building an appropriate dashboard are out of the scope of this document 🙌🏻 look at the =docker-compose.yml= for some hints
 
-With the development system up and running you can inspect the raw metric data that is being collected using:
+With the development system up and running, you can inspect the raw metric data that is being collected using:
 
 #+begin_src restclient
 GET http://localhost:9000/metrics
